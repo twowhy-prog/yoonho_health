@@ -40,6 +40,8 @@ import { ko } from "date-fns/locale"
 import { MonthlyStats } from "@/components/monthly-stats"
 import { MedicationReminder } from "@/components/medication-reminder"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SyncStatus } from "@/components/sync-status"
+import { SyncStorage } from "@/lib/sync-storage"
 
 interface DailyRecord {
   id: string
@@ -101,9 +103,9 @@ export default function YunhoDaily() {
 
   // Load records from localStorage on mount
   useEffect(() => {
-    const savedRecords = localStorage.getItem("yunhoDailyRecords")
+    const savedRecords = SyncStorage.getItem("yunhoDailyRecords")
     if (savedRecords) {
-      setRecords(JSON.parse(savedRecords))
+      setRecords(savedRecords)
     }
 
     // 저장된 사용자 불러오기
@@ -116,7 +118,7 @@ export default function YunhoDaily() {
 
   // Save records to localStorage whenever records change
   useEffect(() => {
-    localStorage.setItem("yunhoDailyRecords", JSON.stringify(records))
+    SyncStorage.setItem("yunhoDailyRecords", records)
   }, [records])
 
   // Save current user
@@ -824,6 +826,9 @@ export default function YunhoDaily() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Sync Status */}
+        <SyncStatus records={records} onDataSync={setRecords} />
 
         {/* Records Table */}
         <Card className="border-orange-200 dark:border-gray-700">
